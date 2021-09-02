@@ -1,4 +1,4 @@
-# web-hello-c
+# web-helloworld-c
 
 Extremely simple HTTP server (written in C) that responds on port 8000 with a hello message. The docker container is built using the "multi-stage build process, with the second build stage being `FROM scratch` (a completely empty file system with no Linux distro). For details on how to do that, see the Dockerfile.
 
