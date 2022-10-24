@@ -1,4 +1,5 @@
 # web-helloworld-c
+![](https://img.shields.io/github/license/julianchen215/web-helloworld-c)
 ![](https://img.shields.io/badge/architecture-arm32-green)
 ![](https://img.shields.io/github/contributors/open-horizon-services/web-helloworld-c)
 
