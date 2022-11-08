@@ -38,4 +38,4 @@ publish-pattern:
 
 register-pattern:
 
-.PHONY: all build dev run test exec push stop clean
+.PHONY: all build dev run test exec push stop clean publish-service publish-pattern register-pattern
