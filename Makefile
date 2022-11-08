@@ -30,11 +30,12 @@ stop:
 
 clean: stop
 	-docker rmi $(DOCKER_HUB_ID)/$(NAME):$(VERSION) 2>/dev/null || :
-
-.PHONY: all build dev run test exec push stop clean
+	
 
 publish-service:
 
 publish-pattern:
 
 register-pattern:
+
+.PHONY: all build dev run test exec push stop clean
