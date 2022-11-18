@@ -11,7 +11,8 @@ build:
 	docker build -t $(DOCKER_HUB_ID)/$(NAME):$(VERSION) .
 
 dev: build stop
-	docker run -it --name $(NAME) -p $(PORT):$(PORT) --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(NAME):$(VERSION) /bin/bash
+	docker run -d --name $(NAME) -p $(PORT):$(PORT) --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
+	docker logs -f $(NAME)
 
 run: stop
 	docker run -d --name $(NAME) -p $(PORT):$(PORT) $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
