@@ -11,7 +11,8 @@ build:
 	docker build -t $(DOCKER_HUB_ID)/$(NAME):$(VERSION) .
 
 dev: build stop
-	docker run -it --name $(NAME) -p $(PORT):$(PORT) --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(NAME):$(VERSION) /bin/bash
+	docker run -d --name $(NAME) -p $(PORT):$(PORT) --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
+	docker logs -f $(NAME)
 
 run: stop
 	docker run -d --name $(NAME) -p $(PORT):$(PORT) $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
@@ -30,5 +31,26 @@ stop:
 
 clean: stop
 	-docker rmi $(DOCKER_HUB_ID)/$(NAME):$(VERSION) 2>/dev/null || :
+	
 
-.PHONY: all build dev run test exec push stop clean
+publish-service:
+	@ARCH=$(ARCH) \
+        SERVICE_NAME="$(SERVICE_NAME)" \
+        SERVICE_VERSION="$(SERVICE_VERSION)"\
+        SERVICE_CONTAINER="$(DOCKER_HUB_ID)/$(SERVICE_NAME):$(SERVICE_VERSION)" \
+        hzn exchange service publish -O $(CONTAINER_CREDS) -f service.json --pull-image
+
+publish-pattern:
+	@ARCH=$(ARCH) \
+        SERVICE_NAME="$(SERVICE_NAME)" \
+        SERVICE_VERSION="$(SERVICE_VERSION)"\
+        PATTERN_NAME="$(PATTERN_NAME)" \
+	hzn exchange pattern publish -f pattern.json
+	
+register-pattern:
+	@hzn register --pattern "${HZN_ORG_ID}/$(PATTERN_NAME)"
+
+agent-stop:
+	@hzn unregister -f
+
+.PHONY: all build dev run test exec push stop clean publish-service publish-pattern register-pattern agent-stop
