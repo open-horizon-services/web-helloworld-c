@@ -8,10 +8,10 @@ PORT:=8000
 all: build run
 
 build:
-	docker build -t $(DOCKER_HUB_ID)/$(NAME):$(VERSION) .
+	docker build --platform linux/amd64 -t $(DOCKER_HUB_ID)/$(NAME):$(VERSION) .
 
 dev: build stop
-	docker run -d --name $(NAME) -p $(PORT):$(PORT) --volume `pwd`:/outside $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
+	docker run -d --name $(NAME) -p $(PORT):$(PORT) $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
 	docker logs -f $(NAME)
 
 run: stop
@@ -19,9 +19,6 @@ run: stop
 
 test:
 	curl -sS localhost:$(PORT)/
-
-exec:
-	docker exec -it $(NAME) /bin/bash
 
 push:
 	docker push $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
@@ -31,7 +28,6 @@ stop:
 
 clean: stop
 	-docker rmi $(DOCKER_HUB_ID)/$(NAME):$(VERSION) 2>/dev/null || :
-	
 
 publish-service:
 	@ARCH=$(ARCH) \
@@ -46,11 +42,11 @@ publish-pattern:
         SERVICE_VERSION="$(SERVICE_VERSION)"\
         PATTERN_NAME="$(PATTERN_NAME)" \
 	hzn exchange pattern publish -f pattern.json
-	
+
 register-pattern:
 	@hzn register --pattern "${HZN_ORG_ID}/$(PATTERN_NAME)"
 
 agent-stop:
 	@hzn unregister -f
 
-.PHONY: all build dev run test exec push stop clean publish-service publish-pattern register-pattern agent-stop
+.PHONY: all build dev run test push stop clean publish-service publish-pattern register-pattern agent-stop
