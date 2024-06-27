@@ -1,11 +1,12 @@
 # A simple "Hello, world." web server container
 
-DOCKER_HUB_ID ?= ibmosquito
+DOCKER_HUB_ID ?= adhishreekadam
 NAME:=web-hello-c
 VERSION:=1.0.0
 PORT:=8000
 
-all: build run
+
+default: build run
 
 build:
 	docker build --platform linux/amd64 -t $(DOCKER_HUB_ID)/$(NAME):$(VERSION) .
