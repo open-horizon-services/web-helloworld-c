@@ -5,15 +5,28 @@ NAME:=web-hello-c
 VERSION:=1.0.0
 PORT:=8000
 
+export SERVICE_NAME ?= web-hello-c
+PATTERN_NAME ?= pattern-web-helloworld-c
+DEPLOYMENT_POLICY_NAME ?= deployment-policy-web-helloworld-c
+NODE_POLICY_NAME ?= node-policy-web-helloworld-c
+export SERVICE_VERSION ?= 1.0.0
+export SERVICE_CONTAINER := $(DOCKER_HUB_ID)/$(SERVICE_NAME):$(SERVICE_VERSION)
+ARCH ?= amd64
+
+# Detect Operating System running Make
+OS := $(shell uname -s)
 
 default: build run
 
 build:
 	docker build --platform linux/amd64 -t $(DOCKER_HUB_ID)/$(NAME):$(VERSION) .
 
-dev: build stop
-	docker run -d --name $(NAME) -p $(PORT):$(PORT) $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
-	docker logs -f $(NAME)
+dev: stop build
+	docker run -it -v `pwd`:/outside \
+          --name ${SERVICE_NAME} \
+          -p 8000:8000 \
+          $(SERVICE_CONTAINER) /bin/bash
+
 
 run: stop
 	docker run -d --name $(NAME) -p $(PORT):$(PORT) $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
