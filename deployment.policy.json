@@ -16,7 +16,7 @@
     ],
     "constraints": [ 
          "purpose == learning",
-         "preferredLanguage == C”
+         "preferredLanguage == C"
     ], 
     "userInput": [ 
       {            

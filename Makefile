@@ -27,6 +27,52 @@ dev: stop build
           -p 8000:8000 \
           $(SERVICE_CONTAINER) /bin/bash
 
+publish: publish-service publish-service-policy publish-deployment-policy
+
+publish-service:
+	@echo "=================="
+	@echo "PUBLISHING SERVICE"
+	@echo "=================="
+	@hzn exchange service publish -O $(CONTAINER_CREDS) --json-file=service.json --pull-image
+	@echo ""
+
+publish-service-policy:
+	@echo "========================="
+	@echo "PUBLISHING SERVICE POLICY"
+	@echo "========================="
+	@hzn exchange service addpolicy -f service.policy.json $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
+	@echo ""
+
+remove-service-policy:
+	@echo "======================="
+	@echo "REMOVING SERVICE POLICY"
+	@echo "======================="
+	@hzn exchange service removepolicy -f $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
+	@echo ""
+
+
+publish-pattern:
+	@ARCH=$(ARCH) \
+        SERVICE_NAME="$(SERVICE_NAME)" \
+        SERVICE_VERSION="$(SERVICE_VERSION)"\
+        PATTERN_NAME="$(PATTERN_NAME)" \
+	hzn exchange pattern publish -f pattern.json
+
+publish-deployment-policy:
+	@echo "============================"
+	@echo "PUBLISHING DEPLOYMENT POLICY"
+	@echo "============================"
+	@hzn exchange deployment addpolicy -f deployment.policy.json $(HZN_ORG_ID)/policy-$(SERVICE_NAME)_$(SERVICE_VERSION)
+	@echo ""
+
+remove-deployment-policy:
+	@echo "=========================="
+	@echo "REMOVING DEPLOYMENT POLICY"
+	@echo "=========================="
+	@hzn exchange deployment removepolicy -f $(HZN_ORG_ID)/policy-$(SERVICE_NAME)_$(SERVICE_VERSION)
+	@echo ""
+
+remove: remove-deployment-policy remove-service-policy remove-service
 
 run: stop
 	docker run -d --name $(NAME) -p $(PORT):$(PORT) $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
