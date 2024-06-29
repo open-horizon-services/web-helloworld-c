@@ -29,11 +29,20 @@ dev: stop build
 
 publish: publish-service publish-service-policy publish-deployment-policy
 
+remove: remove-deployment-policy remove-service-policy remove-service
+
 publish-service:
 	@echo "=================="
 	@echo "PUBLISHING SERVICE"
 	@echo "=================="
 	@hzn exchange service publish -O $(CONTAINER_CREDS) --json-file=service.json --pull-image
+	@echo ""
+
+remove-service:
+	@echo "=================="
+	@echo "REMOVING SERVICE"
+	@echo "=================="
+	@hzn exchange service remove -f $(HZN_ORG_ID)/$(SERVICE_NAME)_$(SERVICE_VERSION)_$(ARCH)
 	@echo ""
 
 publish-service-policy:
@@ -72,7 +81,6 @@ remove-deployment-policy:
 	@hzn exchange deployment removepolicy -f $(HZN_ORG_ID)/policy-$(SERVICE_NAME)_$(SERVICE_VERSION)
 	@echo ""
 
-remove: remove-deployment-policy remove-service-policy remove-service
 
 agent-run:
 	@echo "================"
@@ -105,4 +113,4 @@ register-pattern:
 agent-stop:
 	@hzn unregister -f
 
-.PHONY: default build dev publish publish-service publish-service-policy remove-service-policy publish-pattern publish-deployment-policy remove-deployment-policy remove agent-run agent-run-pattern run test push stop clean register-pattern agent-stop
+.PHONY: default build dev publish remove publish-service remove-service publish-service-policy remove-service-policy publish-pattern publish-deployment-policy remove-deployment-policy agent-run agent-run-pattern run test push stop clean register-pattern agent-stop
