@@ -1,6 +1,6 @@
 # A simple "Hello, world." web server container
 
-DOCKER_HUB_ID ?= ibmosquito
+DOCKER_HUB_ID ?= adhishreekadam
 NAME:=web-hello-c
 VERSION:=1.0.0
 PORT:=8000
@@ -16,10 +16,14 @@ ARCH ?= amd64
 # Detect Operating System running Make
 OS := $(shell uname -s)
 
-default: build run
+# Leave blank for open DockerHub containers
+# CONTAINER_CREDS:=-r "registry.wherever.com:myid:mypw"
+CONTAINER_CREDS ?=
 
+default: build run
+	
 build:
-	docker build --platform linux/amd64 -t $(DOCKER_HUB_ID)/$(NAME):$(VERSION) .
+	docker build -t $(SERVICE_CONTAINER) .
 
 dev: stop build
 	docker run -it -v `pwd`:/outside \
@@ -93,8 +97,11 @@ agent-run-pattern:
 	@hzn register --pattern "${HZN_ORG_ID}/$(PATTERN_NAME)"
 
 run: stop
-	docker run -d --name $(NAME) -p $(PORT):$(PORT) $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
-
+	docker run -d \
+        --name ${SERVICE_NAME} \
+        --restart unless-stopped \
+        -p 8000:8000 \
+        $(SERVICE_CONTAINER)
 test:
 	curl -sS localhost:$(PORT)/
 
@@ -102,7 +109,7 @@ push:
 	docker push $(DOCKER_HUB_ID)/$(NAME):$(VERSION)
 
 stop:
-	-docker rm -f $(NAME) 2>/dev/null || :
+	@docker rm -f $(NAME) >/dev/null 2>&1 || :
 
 clean: stop
 	-docker rmi $(DOCKER_HUB_ID)/$(NAME):$(VERSION) 2>/dev/null || :
