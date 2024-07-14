@@ -39,6 +39,10 @@ Create a cryptographic signing key pair. This enables you to sign services when 
 ```sh
 hzn key create **yourcompany** **youremail**
 ```
+Set the ARCH variable to be the hardware you are running the service on.
+```sh
+export ARCH= <hardware architecture>
+```
 Build the service:
 ```sh
 make build
