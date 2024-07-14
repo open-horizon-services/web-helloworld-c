@@ -120,4 +120,25 @@ register-pattern:
 agent-stop:
 	@hzn unregister -f
 
+check:
+	@echo "=================="
+	@echo "SERVICE DEFINITION"
+	@echo "=================="
+	@cat service.definition.json | envsubst
+	@echo ""
+
+deploy-check:
+	@hzn deploycheck all -t device -B deployment.policy.json --service=service.definition.json --service-pol=service.policy.json --node-pol=node.policy.json
+
+log:
+	@echo "========="
+	@echo "EVENT LOG"
+	@echo "========="
+	@hzn eventlog list
+	@echo ""
+	@echo "==========="
+	@echo "SERVICE LOG"
+	@echo "==========="
+	@hzn service log -f $(SERVICE_NAME)
+
 .PHONY: default build dev publish remove publish-service remove-service publish-service-policy remove-service-policy publish-pattern publish-deployment-policy remove-deployment-policy agent-run agent-run-pattern run test push stop clean register-pattern agent-stop
