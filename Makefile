@@ -124,11 +124,11 @@ check:
 	@echo "=================="
 	@echo "SERVICE DEFINITION"
 	@echo "=================="
-	@cat service.definition.json | envsubst
+	@cat service.json | envsubst
 	@echo ""
 
 deploy-check:
-	@hzn deploycheck all -t device -B deployment.policy.json --service=service.definition.json --service-pol=service.policy.json --node-pol=node.policy.json
+	@hzn deploycheck all -t device -B deployment.policy.json --service=service.json --service-pol=service.policy.json --node-pol=node.policy.json
 
 log:
 	@echo "========="
