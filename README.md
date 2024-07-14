@@ -82,6 +82,20 @@ To manually run the `web-helloworld-c` service locally as a test, enter `make`. 
 
 To create [the service definition](https://github.com/open-horizon/examples/blob/master/edge/services/helloworld/CreateService.md#build-publish-your-hw), publish it to the hub, and then form an agreement to download and run the service, enter `make publish`.  When installation is complete and an agreement has been formed, exit the watch command with Control-C.  You may then open the web page by entering `make test` or visiting [http://localhost:8000/](http://localhost:8000/) in a web browser.
 
+## Advanced Details
+
+### Debugging
+
+The Makefile includes several targets to assist you in inspecting what is happening to see if they match your expectations.  They include:
+
+`make log` to see both the event logs and the service logs.
+
+`make check` to see the values in your environment variables and how they are populated into the service definition file.
+
+`make deploy-check` to see if the properties and constraints that you've configured match each other to potentially form an agreement.
+
+`make test` to see if the web server is responding.
+
 ### All Makefile targets
 
 * `default` - executes the build, and then run targets
