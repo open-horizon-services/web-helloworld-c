@@ -1,6 +1,6 @@
 {
     "properties": [],
     "constraints": [
-        "preferredLanguage == C AND purpose == learning"
+        "preferredLanguage == C"
     ]
 }
