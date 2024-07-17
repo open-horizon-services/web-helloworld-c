@@ -5,16 +5,81 @@
 
 Extremely simple HTTP server (written in C) that responds on port 8000 with a hello message. The docker container is built using the "multi-stage build process, with the second build stage being `FROM scratch` (a completely empty file system with no Linux distro). For details on how to do that, see the Dockerfile.
 
-I think this will build on many hardware architectures. :-)  I tested in on a Raspberry Pi 3B (arm32v7) and the image size ended up being 0.4MB (see below). That's pretty tiny considering that the extremely tiny `alpine` Linux distro base container with no workload inside at all is about 10 times larger than this:
+## Prerequisites
 
-```
--rw-r--r-- 1 pi pi 4098560 Apr 27 20:03 alpine.tar
--rw-r--r-- 1 pi pi  419840 Apr 28 14:39 web-hello-c.tar
-```
-Begin by editing the variables at the top of the Makefile as desired. If you plan to push it to a Docker registery, make sure you give your docker ID. You may also want to create unique names for your **service** and **pattern** (necessary if you are sharing a tenancy with other users and you are all publishing this service).
+NOTE: If you plan to build a new image, a DockerHub login is required and export DOCKER_HUB_ID=[your DockerHub ID] before running installation and Makefile targets.
 
+NOTE: Export the "ARCH" environment variable to set a non-default value for the build process.
 
-To play with this outside of Open Horizon:
+To ensure the successful installation and operation of the Open Horizon service, the following prerequisites must be met:
+
+**Open Horizon Management Hub:** To publish this service and register your edge node, you must either [install the Open Horizon Management Hub](https://open-horizon.github.io/quick-start) or have access to an existing hub. You may also choose a downstream commercial distribution like IBM's Edge Application Manager. If you'd like to use the Open Horizon community hub, you may [apply for a temporary account](https://wiki.lfedge.org/display/LE/Open+Horizon+Management+Hub+Developer+Instance) at the Open Horizon community hub, where credentials will be provided.
+
+**Edge Node:**You will need an x86 computer running Linux or macOS, or an ARM64 device such as a Raspberry Pi running Raspberry Pi OS or Ubuntu. The `anax` agent software must be installed on your edge node. This software facilitates communication with the Management Hub and manages the deployment of services.
+
+**Optional Utilities:** Depending on your operating system, you may use:
+  - `brew` on macOS
+  - `apt-get` on Ubuntu or Raspberry Pi OS
+  - `yum` on Fedora
+  
+These commands can install `gcc`, `make`, `git`, `jq`, `curl`, and `net-tools`. These utilities are not strictly required but are highly recommended for successful deployment and troubleshooting.
+
+## Installation
+
+1. **Clone the repository:**
+    Clone the `web-helloworld-c` GitHub repo from a terminal prompt on the edge node and enter the folder where the artifacts were copied.
+
+   ```shell
+   git clone https://github.com/open-horizon-services/web-helloworld-c.git
+   cd web-helloworld-c
+    ```
+
+2. **Edit Makefile:**
+    Adjust the variables at the top of the Makefile as needed, including your Docker ID and unique names for your service and pattern.
+
+    ```shell
+    DOCKER_HUB_ID=your_docker_id
+    ARCH=amd64
+    ```
+    You can also override these default values by exporting them in your terminal before running any make commands. This way, you don't have to edit the values directly in the Makefile.
+   ```shell
+   export DOCKER_HUB_ID=my_docker_id
+   export ARCH=my_architecture
+   ```
+   
+    Run `make clean` to confirm that the "make" utility is installed and workin
+
+    Confirm that you have the Open Horizon agent installed by using the CLI to check the version:
+
+    ``` shell
+     hzn version
+     ```
+
+    It should return values for both the CLI and the Agent (actual version numbers may vary from those shown):
+
+    ``` text
+    Horizon CLI version: 2.31.0-1540
+    Horizon Agent version: 2.31.0-1540
+    ```
+
+    If it returns "Command not found", then the Open Horizon agent is not installed.
+
+    If it returns a version for the CLI but not the agent, then the agent is installed but not running.  You may run it with `systemctl horizon start` on Linux or `horizon-container start` on macOS.
+
+    Check that the agent is in an unconfigured state, and that it can communicate with a hub.  If you have the `jq` utility installed, run `hzn node list | jq '.configstate.state'` and check that the value returned is "unconfigured".  If not, running `make agent-stop` or `hzn unregister -f` will put the agent in an unconfigured state.  Run `hzn node list | jq '.configuration'` and check that the JSON returned shows values for the "exchange_version" property, as well as the "exchange_api" and "mms_api" properties showing URLs.  If those do not, then the agent is not configured to communicate with a hub.  If you do not have `jq` installed, run `hzn node list` and eyeball the sections mentioned above.
+
+    NOTE: If "exchange_version" is showing an empty value, you will not be able to publish and run the service.  The only fix found to this condition thus far is to re-install the agent using these instructions:
+
+    ```shell
+    hzn unregister -f # to ensure that the node is unregistered
+    systemctl horizon stop # for Linux, or "horizon-container stop" on macOS
+    export HZN_ORG_ID=myorg   # or whatever you customized it to
+    export HZN_EXCHANGE_USER_AUTH=admin:<admin-pw>   # use the pw deploy-mgmt-hub.sh displayed
+    export HZN_FSS_CSSURL=http://<mgmt-hub-ip>:9443/
+    curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-install.sh | bash -s -- -i anax: -k css: -c css: -p IBM/pattern-ibm.helloworld -w '*' -T 120
+    ```
+
+## To play with this outside of Open Horizon:
 
 ```sh
 make build
@@ -30,7 +95,7 @@ Stop the running service
 make stop
 ```
 
-When you are ready to try it inside Open Horizon:
+## Try it inside Open Horizon:
 ```sh
 docker login
 ```
