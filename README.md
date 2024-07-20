@@ -7,7 +7,7 @@ Extremely simple HTTP server (written in C) that responds on port 8000 with a he
 
 ## Prerequisites
 
-NOTE: If you plan to build a new image, a DockerHub login is required and export DOCKER_HUB_ID=[your DockerHub ID] before running installation and Makefile targets.
+NOTE: If you plan to build a new image, a DockerHub login is required and `export DOCKER_HUB_ID=[your DockerHub ID]` before running installation and Makefile targets.
 
 NOTE: Export the "ARCH" environment variable to set a non-default value for the build process.
 
@@ -47,7 +47,7 @@ These commands can install `gcc`, `make`, `git`, `jq`, `curl`, and `net-tools`. 
    export ARCH=my_architecture
    ```
    
-    Run `make clean` to confirm that the "make" utility is installed and workin
+    Run `make clean` to confirm that the "make" utility is installed and working
 
     Confirm that you have the Open Horizon agent installed by using the CLI to check the version:
 
@@ -79,7 +79,7 @@ These commands can install `gcc`, `make`, `git`, `jq`, `curl`, and `net-tools`. 
     curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-install.sh | bash -s -- -i anax: -k css: -c css: -p IBM/pattern-ibm.helloworld -w '*' -T 120
     ```
 
-## To play with this outside of Open Horizon:
+### To play with this outside of Open Horizon:
 
 ```sh
 make build
@@ -95,7 +95,7 @@ Stop the running service
 make stop
 ```
 
-## Try it inside Open Horizon:
+### Try it inside Open Horizon:
 ```sh
 docker login
 ```
@@ -104,13 +104,14 @@ Create a cryptographic signing key pair. This enables you to sign services when 
 ```sh
 hzn key create **yourcompany** **youremail**
 ```
-Set the ARCH variable to be the hardware you are running the service on.
-```sh
-export ARCH= <hardware architecture>
-```
+
 Build the service:
 ```sh
 make build
+```
+
+Push it in your docker hub:
+```sh
 make push
 ```
 
@@ -185,3 +186,12 @@ The Makefile includes several targets to assist you in inspecting what is happen
 * `agent-stop` - unregister your agent with the hub, halting all agreements and stopping containers
 * `deploy-check` - confirm that a registered agent is compatible with the service and deployment
 * `log` - check the agent event logs
+
+### Authors
+
+* [John Walicki](https://github.com/johnwalicki)
+* [Troy Fine](https://github.com/t-fine)
+
+___
+
+Enjoy!  Give us [feedback](https://github.com/open-horizon-services/web-helloworld-c/issues) if you have suggestions on how to improve this tutorial.
