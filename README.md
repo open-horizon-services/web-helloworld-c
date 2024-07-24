@@ -22,7 +22,7 @@ To ensure the successful installation and operation of the Open Horizon service,
   - `apt-get` on Ubuntu or Raspberry Pi OS
   - `yum` on Fedora
   
-These commands can install `gcc`, `make`, `git`, `jq`, `curl`, and `net-tools`. These utilities are not strictly required but are highly recommended for successful deployment and troubleshooting.
+These commands can install `gcc`, `make`, `git`, `jq`, `curl`, `watch` and `net-tools`. These utilities are not strictly required but are highly recommended for successful deployment and troubleshooting.
 
 ## Installation
 
@@ -72,11 +72,17 @@ These commands can install `gcc`, `make`, `git`, `jq`, `curl`, and `net-tools`. 
 
     ```shell
     hzn unregister -f # to ensure that the node is unregistered
+    
     systemctl horizon stop # for Linux, or "horizon-container stop" on macOS
+    
     export HZN_ORG_ID=myorg   # or whatever you customized it to
-    export HZN_EXCHANGE_USER_AUTH=admin:<admin-pw>   # use the pw deploy-mgmt-hub.sh displayed
-    export HZN_FSS_CSSURL=http://<mgmt-hub-ip>:9443/
-    curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-install.sh | bash -s -- -i anax: -k css: -c css: -p IBM/pattern-ibm.helloworld -w '*' -T 120
+    export HZN_EXCHANGE_USER_AUTH=<provided credentials>   # use the value provided by the admin
+    export HZN_EXCHANGE_URL=<provided value> # ex: http://open-horizon.lfedge.iol.unh.edu:3090/v1
+    export HZN_FSS_CSSURL=<provided value> # ex: http://open-horizon.lfedge.iol.unh.edu:9443/
+    export HZN_AGBOT_URL=<provided value> # ex: http://open-horizon.lfedge.iol.unh.edu:3111
+    export HZN_FDO_SVC_URL=<provided value> # ex: http://open-horizon.lfedge.iol.unh.edu:9008/api
+    
+    curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-install.sh | bash -s -- -i anax: -k css: -c css: -p $HZN_ORG_ID/$PATTERN_NAME -w '*' -T 120
     ```
 
 ### To play with this outside of Open Horizon:
@@ -189,8 +195,9 @@ The Makefile includes several targets to assist you in inspecting what is happen
 
 ### Authors
 
-* [John Walicki](https://github.com/johnwalicki)
 * [Troy Fine](https://github.com/t-fine)
+* [Adhishree Kadam](https://github.com/adhishreekadam)
+
 
 ___
 
