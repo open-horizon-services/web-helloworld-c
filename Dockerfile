@@ -1,6 +1,6 @@
-FROM ubuntu:22.10
+FROM ubuntu:22.04
 
-RUN apt update && apt install -y build-essential
+RUN apt-get -y update && apt-get -y install build-essential
 
 WORKDIR /
 COPY webhello.c /

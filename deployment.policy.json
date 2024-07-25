@@ -1,0 +1,28 @@
+{
+    "label": "$SERVICE_NAME Deployment Policy",      
+    "description": "Policy to auto deploy $SERVICE_NAME",
+    "service": {       
+      "name": "$SERVICE_NAME",
+      "org": "$HZN_ORG_ID",    
+      "arch": "*",    
+      "serviceVersions": [ 
+        {
+          "version": "$SERVICE_VERSION",
+          "priority":{}
+        }
+      ]
+    },
+    "properties": [
+    ],
+    "constraints": [ 
+         "purpose == learning"
+    ], 
+    "userInput": [ 
+      {            
+        "serviceOrgid": "$HZN_ORG_ID",
+        "serviceUrl": "$SERVICE_NAME",
+        "serviceVersionRange": "[0.0.0,INFINITY)",
+        "inputs": []
+      }
+    ]
+}  
